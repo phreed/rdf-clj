@@ -1,13 +1,13 @@
   (ns rdf
-  (:import
-    (org.apache.commons.rdf.api RDF)
-    (org.apache.commons.rdf.simple SimpleRDF))
-  (:require
-    [rdf.utils :as u]
-    [rdf.protocols :as p]
-    [rdf.ns]
-    [rdf.seq]
-    [rdf.commonsrdf :as c]))
+   (:import
+     (org.apache.commons.rdf.api RDF)
+     (org.apache.commons.rdf.simple SimpleRDF))
+   (:require
+     [rdf.utils :as u]
+     [rdf.protocols :as p]
+     [rdf.ns]
+     [rdf.seq]
+     [rdf.commonsrdf :as c]))
 
 
 (defn rdf-impl
@@ -33,12 +33,12 @@
   default implementation, currently :clojure"
   ([] (rdf-impl :clojure))
   ([r]
-    {:post [(satisfies? p/RDF %)]}
-    (cond
-      (= :clojure r) (hash-map)
-      (= :any r) (c/rdf-impl)
-      (keyword? r) (c/rdf-impl r)
-      :else r)))
+   {:post [(satisfies? p/RDF %)]}
+   (cond
+     (= :clojure r) (hash-map)
+     (= :any r) (c/rdf-impl)
+     (keyword? r) (c/rdf-impl r)
+     :else r)))
 
 
 (def ^:dynamic *rdf*
@@ -97,44 +97,44 @@
   (or nil), while the second argument must be a datatype iri.
   "
   ([lit]
-    {:pre [(not (nil? lit))]
-     :post [(p/literal? %)]}
-    (p/literal *rdf* lit))
+   {:pre [(not (nil? lit))]
+    :post [(p/literal? %)]}
+   (p/literal *rdf* lit))
   ([lit type-or-lang]
-    {:pre [(not (nil? lit))
-           (or (p/iri? type-or-lang)
-               (string? type-or-lang)
-               (keyword? type-or-lang))]
-     :post [(p/literal? %)]}
-    (p/literal *rdf* lit type-or-lang))
+   {:pre [(not (nil? lit))
+          (or (p/iri? type-or-lang)
+              (string? type-or-lang)
+              (keyword? type-or-lang))]
+    :post [(p/literal? %)]}
+   (p/literal *rdf* lit type-or-lang))
   ([lit type lang]
-    {:pre [(not (nil? lit))
-           (p/iri? type)
-           (or (string? lang) (keyword? lang))]
-     :post [(p/literal? %)]}
-    (p/literal *rdf* lit type lang)))
+   {:pre [(not (nil? lit))
+          (p/iri? type)
+          (or (string? lang) (keyword? lang))]
+    :post [(p/literal? %)]}
+   (p/literal *rdf* lit type lang)))
 
 (defn blanknode
   "Create a blank node.  If the argument label is provided,
   it may be used to locally identify the blank node."
   ([]
-    {:post [(p/blanknode? %)]}
-    (p/blanknode *rdf*))
+   {:post [(p/blanknode? %)]}
+   (p/blanknode *rdf*))
   ([label]
-    {:post [(p/blanknode? %)]}
-    (p/blanknode *rdf* label)))
+   {:post [(p/blanknode? %)]}
+   (p/blanknode *rdf* label)))
 
 
 (defn term?
   "Return true if t is an RDF term (IRI, blank node or string)"
   [t]
-    (boolean (or (p/iri? t) (p/blanknode? t) (p/literal? t))))
+  (boolean (or (p/iri? t) (p/blanknode? t) (p/literal? t))))
 
 (defn triple? [t]
   "Return true if t is an RDF triple.
   The triple must have a valid subject, predicate and object."
   (boolean (and
-    (p/subject t) (p/predicate t) (p/object t))))
+            (p/subject t) (p/predicate t) (p/object t))))
 
 (defn graph? [g]
   "Return true if g can be accessed as an RDF graph"
@@ -148,15 +148,15 @@
       (triple (blanknode) (iri \"http://schema.org/name\") (literal \"Example\"))
   "
   ([t]
-    {:pre [(triple? t)]
-     :post [(triple? %)]}
-    (p/triple *rdf* t))
-  ([subj pred obj]
-    {:pre [(or (p/iri? subj) (p/blanknode? subj))
-           (p/iri? pred)
-           (term? obj)]
+   {:pre [(triple? t)]
     :post [(triple? %)]}
-    (p/triple *rdf* subj pred obj)))
+   (p/triple *rdf* t))
+  ([subj pred obj]
+   {:pre [(or (p/iri? subj) (p/blanknode? subj))
+          (p/iri? pred)
+          (term? obj)]
+    :post [(triple? %)]}
+   (p/triple *rdf* subj pred obj)))
 
 ; expose p/Triple protocol
 (defn subject [t]
@@ -199,7 +199,7 @@
     (let [s (p/ntriples-str (subject t))
           p (p/ntriples-str (predicate t))
           o (p/ntriples-str (object t))]
-          (str s " " p " " o " ."))))
+         (str s " " p " " o " ."))))
 
 (defn iri-str
   "Return the IRI string of i"
@@ -211,7 +211,7 @@
   "Return the lexical string of RDF literal"
   [lit]
   {:post [(string? %)]}
-   (p/literal-str lit))
+  (p/literal-str lit))
 
 (defn literal-lang
   "Return the language tag of RDF literal,
@@ -237,15 +237,15 @@
 (defn add-triple
   "Return a graph with the triple added"
   ([g t]
-    {:pre [(triple? t)]
-     :post [(satisfies? p/Graph %)]}
-    (p/add-triple g t))
+   {:pre [(triple? t)]
+    :post [(satisfies? p/Graph %)]}
+   (p/add-triple g t))
   ([g subj pred obj]
-    {:pre [(or (iri? subj) (blanknode? subj))
-           (iri? pred)
-           (satisfies? p/Term obj)]
-     :post [(satisfies? p/Graph %)]}
-     (p/add-triple g subj pred obj)))
+   {:pre [(or (iri? subj) (blanknode? subj))
+          (iri? pred)
+          (satisfies? p/Term obj)]
+    :post [(satisfies? p/Graph %)]}
+   (p/add-triple g subj pred obj)))
 
 (defn triple-count
   "Return count of triples in graph"

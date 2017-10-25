@@ -14,8 +14,8 @@
     [f name])
   (triple
     [f t]
-    [f subj pred obj])
-)
+    [f subj pred obj]))
+
 
 
 (defprotocol Term
@@ -31,8 +31,8 @@
   (literal-lang ^String [term])
   (literal-type [term])
 
-  (blanknode-ref [term])
-)
+  (blanknode-ref [term]))
+
 
 (defn term
   "Coerce t to be an RDF term (iri, literal or blanknode)
@@ -48,8 +48,8 @@
 (defprotocol Triple
   (subject [t])
   (predicate [t])
-  (object [t])
-)
+  (object [t]))
+
 
 
 (defprotocol Graph
@@ -62,22 +62,21 @@
   (contains-triple?
     [g t]
     [g subj pred obj])
-  (triple-count [g])
-)
+  (triple-count [g]))
+
 
 ; nil: not iri, literal or blanknode
 (extend-type nil Term
   (iri? [obj] false)
   (literal? [obj] false)
-  (blanknode? [obj] false)
+  (blanknode? [obj] false))
   ; deliberately let the rest of the functions fail
-)
+
 
 
 ; Default: not iri, literal or blanknode
 (extend-type java.lang.Object Term
   (iri? [obj] false)
   (literal? [obj] false)
-  (blanknode? [obj] false)
+  (blanknode? [obj] false))
   ; deliberately let the rest of the functions fail
-)
